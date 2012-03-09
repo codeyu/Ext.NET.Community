@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<xs:schema 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    attributeFormDefault="unqualified" 
+    elementFormDefault="qualified" 
+    targetNamespace="http://www.coolite.com/webconfig" 
+    xmlns="http://www.coolite.com/webconfig">
+  
+	<xs:include schemaLocation="DotNetConfig.xsd" />
+	<xs:element name="coolite">
+	    <xs:complexType>
+			<xs:attribute name="gzip" type="small_boolean_Type" use="optional" /> 
+			<xs:attribute name="cleanResourceUrl" type="small_boolean_Type" use="optional" />
+			<xs:attribute name="scriptAdapter" use="optional">			
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+					  <xs:enumeration value="Ext" /> 
+					  <xs:enumeration value="jQuery" /> 
+					  <xs:enumeration value="Prototype" /> 
+					  <xs:enumeration value="YUI" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="renderScripts" use="optional">			
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+					  <xs:enumeration value="Embedded" /> 
+					  <xs:enumeration value="File" /> 
+					  <xs:enumeration value="None" /> 
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="renderStyles" use="optional">			
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+					  <xs:enumeration value="Embedded" /> 
+					  <xs:enumeration value="File" /> 
+					  <xs:enumeration value="None" /> 
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="resourcePath" type="xs:string" use="optional" />
+			<xs:attribute name="scriptMode" use="optional">			
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+					  <xs:enumeration value="Release" /> 
+					  <xs:enumeration value="Debug" /> 
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="sourceFormatting" type="small_boolean_Type" use="optional" /> 
+			<xs:attribute name="theme" use="optional">			
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+					  <xs:enumeration value="Default" /> 
+					  <xs:enumeration value="Gray" /> 
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+	    </xs:complexType>
+	</xs:element>	
+</xs:schema>

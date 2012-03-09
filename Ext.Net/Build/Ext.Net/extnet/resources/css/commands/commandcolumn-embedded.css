@@ -1,0 +1,63 @@
+.row-cmd-cell-ct,
+.row-cmd-cell .x-grid-cell-inner
+{
+	padding:0px;
+}
+
+.x-grid-group-hd div.row-cmd-cell-group-ct
+{
+	padding:0px;
+	padding-top:6px;
+}
+
+div.row-cmd-cell-group-ct .x-grid-group-title
+{
+    float:left;
+    height:16px;
+    background-position: 0px 3px;
+    margin-left:4px;
+}
+
+.x-grid .row-cmd-cell-ct TABLE, 
+.x-grid .row-cmd-cell-ct TABLE.x-btn,
+.x-grid .row-cmd-cell-group-ct TABLE, 
+.x-grid .row-cmd-cell-group-ct TABLE.x-btn  
+{
+    table-layout:auto !important;
+}
+
+.x-grid .row-cmd-cell-ct td,
+.x-grid .row-cmd-cell-group-ct td 
+{
+	border-left:none !important;
+	border-right:none !important;
+	vertical-align:middle !important;
+}
+
+
+/*.x-grid-row td,*/ .x-grid-summary-row td
+{
+	vertical-align:middle !important;
+}
+
+.x-grid-row td.x-grid-td-expander
+{
+	vertical-align:top !important;
+}
+
+
+
+.x-grid-group-hd div.row-cmd-cell-ct
+{
+	padding-top:0px !important;
+	padding-bottom:0px !important;
+}
+
+div.standard-view-group 
+{
+    float:left;
+    padding-top:4px !important;
+    padding-bottom:4px !important;
+    padding-right:4px !important;
+    padding-left:0px !important;
+}

@@ -1,0 +1,22 @@
+﻿.row-cmp-cell-ct,
+.row-cmp-cell .x-grid-cell-inner
+{
+	padding:0px;
+}
+
+.x-grid .row-cmp-cell-ct TABLE, 
+.x-grid .row-cmp-cell-ct TABLE.x-btn
+{
+    table-layout:auto !important;
+}
+
+.x-grid .row-cmp-cell-ct td
+{
+	border-left:none !important;
+	border-right:none !important;
+	vertical-align:middle !important;
+}
+.x-grid .row-cmp-placeholder
+{
+    padding: 3px 6px;
+}

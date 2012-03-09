@@ -1,0 +1,32 @@
+Ext JS Library 3.3.0
+Copyright(c) 2006-2010 Ext JS, Inc.
+licensing@extjs.com
+http://www.extjs.com/license
+ 
+
+http://www.sencha.com/store/js/license.php
+
+Open Source License
+------------------------------------------------------------------------------------------
+Ext JS is licensed under the terms of the Open Source GPL 3.0 license. 
+
+http://www.gnu.org/licenses/gpl.html
+
+
+Commercial License
+------------------------------------------------------------------------------------------
+If you are using this library for commercial purposes, we encourage you to purchase
+a commercial license. Please visit http://www.sencha.com/products/license.php for more 
+details.
+
+
+OEM / Reseller License
+------------------------------------------------------------------------------------------
+For more details, please visit: http://www.sencha.com/products/license.php.
+
+--
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.

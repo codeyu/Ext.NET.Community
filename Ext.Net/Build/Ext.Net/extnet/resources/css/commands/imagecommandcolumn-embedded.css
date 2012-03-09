@@ -1,0 +1,73 @@
+/*ImageCommand*/
+.row-imagecommand-cell .x-grid-cell-inner
+{
+	padding:0px  !important;
+}
+
+.x-ie6 .row-imagecommand-cell .x-grid-cell-inner,
+.x-ie7 .row-imagecommand-cell .x-grid-cell-inner,
+.x-ie8 .row-imagecommand-cell .x-grid-cell-inner
+{
+	margin-top : -1px;
+}
+
+.row-imagecommand 
+{
+	float:left  !important;
+	min-width:16px  !important;
+	height:16px  !important;
+	margin: 0px 1px 0px 0px  !important;
+	overflow:hidden  !important;
+	background-repeat:no-repeat  !important;	
+	cursor:pointer  !important;	
+}
+.row-imagecommand span 
+{	
+	padding:0px 5px 0px 17px  !important;
+	line-height:16px  !important;
+	vertical-align:middle  !important;
+	white-space:nowrap !important;
+}
+/*GroupImageCommand*/
+.x-ie6 div.no-row-imagecommand-text{
+    width:16px !important;
+}
+
+.x-grid-group-imagecommand .x-grid-group-hd .x-grid-group-title 
+{
+	height:16px !important;
+}
+.group-row-imagecommand 
+{
+	float:left;
+	min-width:16px;
+	height:16px;
+	background-repeat:no-repeat;
+	background-position: 0 50%;
+	margin: 0px 0px 0px 1px;
+	padding: 0px;
+	cursor:pointer;	
+	padding-top: 0px;
+}
+.right-group-imagecommand 
+{
+	float:right;
+	margin: 0px 3px 0px 2px;
+	padding: 0px !important;
+}
+.group-row-imagecommand-cell 
+{
+	float:left;
+	padding: 0px;
+	padding-right: 5px;
+	margin:1px 0px 0px 0px;	
+	background:transparent none !important;		
+}
+.group-row-imagecommand span
+{		
+	margin:0px 4px 0px 18px;
+	padding:0px;
+	line-height:18px;
+	vertical-align:middle;
+	white-space:nowrap;
+}

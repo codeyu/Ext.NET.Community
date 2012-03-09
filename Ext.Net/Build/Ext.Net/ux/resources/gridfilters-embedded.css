@@ -1,0 +1,25 @@
+.ux-rangemenu-icon {
+    margin-top: 0;
+}
+
+.ux-rangemenu-gt {
+    background-image: url("<%=WebResource("Ext.Net.Build.Ext.Net.ux.resources.images.gridfilters.greater_than.png")%>") !important;
+}
+
+.ux-rangemenu-lt {
+    background-image: url("<%=WebResource("Ext.Net.Build.Ext.Net.ux.resources.images.gridfilters.less_than.png")%>") !important;
+}
+
+.ux-rangemenu-eq {
+    background-image: url("<%=WebResource("Ext.Net.Build.Ext.Net.ux.resources.images.gridfilters.equals.png")%>") !important;
+}
+
+
+.ux-filtered-column {
+    font-style: italic;  
+    font-weight: bold;
+}
+
+.ux-gridfilter-text-icon {
+    background-image: url("<%=WebResource("Ext.Net.Build.Ext.Net.ux.resources.images.gridfilters.find.png")%>") !important;
+}

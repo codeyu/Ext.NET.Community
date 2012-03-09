@@ -1,0 +1,73 @@
+/* StatusBar - structure */
+.x-statusbar .x-status-text {
+    cursor: default;
+}
+
+.x-statusbar .x-status-busy-base {
+    padding-left: 25px !important;
+    background: transparent no-repeat 3px 0px;
+}
+
+.x-statusbar .x-status-busy {
+    background-image: url("<%=WebResource("Ext.Net.Build.Ext.Net.ux.resources.images.statusbar.loading.gif")%>");
+}
+
+.x-statusbar .x-status-text-panel {
+    border-color: #99bbe8 #fff #fff #99bbe8;
+}
+
+.x-toolbar div.xtb-text
+
+.x-statusbar .x-status-text-panel {
+    border-top: 1px solid;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    border-left: 1px solid;
+    padding: 2px 8px 2px 5px;
+}
+
+.x-statusbar-base-error-icon {
+    color: #C33 !important;
+    cursor: pointer !important;
+    padding-left: 25px !important;
+    background-position: 3px 0px !important;
+    background-repeat:no-repeat !important;  
+    background-color:transparent !important; 
+}
+
+.x-statusbar .x-status-error{
+     background-image:url("<%=WebResource("Ext.Net.Build.Ext.Net.ux.resources.images.statusbar.exclamation.gif")%>") !important;
+}
+
+.x-status-base-valid-icon {
+    padding-left: 25px !important;
+    background-position: 3px 0px !important;
+    background-repeat:no-repeat !important;  
+    background-color:transparent !important; 
+}
+
+.x-statusbar .x-status-valid {
+    background-image: url("<%=WebResource("Ext.Net.Build.Ext.Net.ux.resources.images.statusbar.accept.png")%>") !important;
+}
+
+.x-status-error-list {
+    font: 11px tahoma,arial,verdana,sans-serif;
+    position: absolute;
+    z-index: 9999;
+    border: 1px solid #C33;
+    background: #ffa;
+    padding: 5px 10px;
+    color: #999;
+}
+.x-status-error-list li {
+    cursor: pointer;
+    list-style: disc;
+    margin-left: 10px;
+}
+.x-status-error-list li a {
+    color: #15428B;
+    text-decoration: none;
+}
+.x-status-error-list li a:hover {
+    text-decoration: underline;
+}

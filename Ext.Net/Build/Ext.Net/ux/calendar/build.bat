@@ -1,0 +1,1 @@
+..\..\..\JSBuilder\JSBuildConsole.exe /path=calendar-all.jsb 

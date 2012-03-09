@@ -1,0 +1,787 @@
+**************************************************************************
+*                       Version 2.x CHANGELOG                            *
+**************************************************************************
+
+1.   - XControl renamed to BaseControl
+	 - StateManagedItem renamed to BaseItem
+	 - StateManagedItemCollection renamed to BaseItemCollection
+
+
+*2.	 .AutoRender functionality has changed. 
+	 Need to determine if old functionality should be recreated or is no longer required?
+	 All usages of .AutoRender should checked to determine if using in proper context. 
+
+3.	 Window .CloseAction "Close" has been renamed to "Destroy".
+
+	 Example
+
+	 // Old
+	 <ext:Window runat="server" CloseAction="Close" />
+
+	 // New
+	 <ext:Window runat="server" CloseAction="Destroy" />
+
+4.	 Panel .Padding property has been renamed to .BodyPadding. 
+
+	 Example
+	 
+	 // Old
+	 <ext:Window runat="server" Padding="5" />
+	 
+	 // New
+	 <ext:Window runat="server" BodyPadding="5" />
+
+	 The .Padding property is still available, although now renders as Padding around 
+	 the Component, instead of padding in the Body of the Component.
+
+	 All previous instance of .Padding should be renamed to .BodyPadding. 
+
+5.	 Panel .Border type has been changed from a Boolean to a Int. To remove border, set to "0". 
+
+	 Example
+
+	 // Old
+	 <ext:Panel runat="server" Border="false" />
+	 
+	 // New
+	 <ext:Panel runat="server" Border="0" />
+
+6.	 AccordionLayout .Animate property has been renamed to .AnimatePosition. 
+
+	 Example
+
+	 // Old
+	 <ext:AccordionLayout runat="server" Animate="false">
+
+	 // New
+	 <ext:AccordionLayout runat="server" AnimatePostion="false">
+
+7.	 AfterRecordUpdatedEventArgs .NewValues has been renamed to .Values.
+	 
+	 Example
+
+	 // Old
+	 protected void Store1_RecordUpdated(object sender, AfterRecordUpdatedEventArgs e)
+     {
+         var company = new
+         {
+             Name = e.NewValues["company"],
+             Price = e.NewValues["price"],
+             LastChange = e.NewValues["lastChange"]
+         };
+     }
+
+	 //New
+	 protected void Store1_RecordUpdated(object sender, AfterRecordUpdatedEventArgs e)
+     {
+         var company = new
+         {
+             Name = e.Values["company"],
+             Price = e.Values["price"],
+             LastChange = e.Values["lastChange"]
+         };
+     }
+
+8.	 GridPanel .StripeRows has been moved to GridView.
+
+	 Example
+
+	 //Old
+	 <ext:GridPanel runat="server" StripeRows="true">
+
+	 //New
+	 <ext:GridPanel runat="server">
+         <View>
+             <ext:GridView runat="server" StripeRows="true" />
+         </View>
+     </ext:GridPanel>
+
+9.	 GridPanel .TrackMouseOver has been moved to GridView and renamed to .TrackOver
+
+	 Example
+
+	 //Old
+	 <ext:GridPanel runat="server" TrackMouseOver="true">
+
+	 //New
+	 <ext:GridPanel runat="server">
+         <View>
+             <ext:GridView runat="server" TrackOver="true" />
+         </View>
+     </ext:GridPanel>
+
+	 Note
+
+	 In according to ExtJS docs the default value is false. Now it's not. So, it needs to check it in the future.
+	 Now is August'17.
+
+10.	 GridPanel .AutoExpandColumn has been removed. To achieve the same effect use .Flex of Column.
+	
+	 Example
+
+	 //Old
+	 <ext:GridPanel runat="server" AutoExpandColumn="Company">
+		 <ColumnModel runat="server">
+			 <Columns>
+				 <ext:Column ColumnID="Company" ... />
+			 </Columns>
+		 </ColumnModel>
+	 </ext:GridPanel>
+
+	 //New
+	 <ext:GridPanel runat="server">
+		 <ColumnModel runat="server">
+			 <Columns>
+				 <ext:Column Flex="1" ... />
+			 </Columns>
+		 </ColumnModel>
+	 </ext:GridPanel>
+
+11.  RowSelectionModel .SingleSelect has been removed.
+
+	 Now use the public property .Mode which is defined in AbstractSelectionModel. The possible values are Single (default), Simple and Multi.
+	 
+	 RowSelectionModel and CheckboxSelectionModel inherit from AbstractSelectionModel.
+
+	 The default value of .SingleSelect is false: so, the equivalent is Mode="Multi" which is not default and should be set up explicitly.
+
+	 Example 1
+
+	 //Old
+	 <ext:RowSelectionModel runat="server">
+
+	 //New
+	 <ext:RowSelectionModel runat="server" Mode="Multi">
+
+	 Example 2
+
+	 //Old
+	 <ext:RowSelectionModel runat="server" SinlgeSelect="true">
+
+	 //New
+	 <ext:RowSelectionModel runat="server" Mode="Single">
+
+	 Example 3
+
+	 //Old
+	 <ext:CheckboxSelectionModel runat="server" SinlgeSelect="false">
+
+	 //New
+	 <ext:CheckboxSelectionModel runat="server" Mode="Multi">
+
+12.  Column .ColumnID has been renamed to .ID
+
+	 Now Column is a component and registered in ComponentMgr (http://www.sencha.com/forum/showthread.php?133562)
+
+	 Example
+
+	 //Old
+	 <ext:Column ColumnID="company">
+
+	 //New
+	 <ext:Column ID="company" runat="server">
+
+13.  Column .Header has been replaced with .Text
+	 The JavaScript config option .header can still work, but it's deprecated.
+
+	 Example 1
+
+	 //Old
+	 <ext:Column Header="Company">
+
+	 //New
+	 <ext:Column Text="Company">
+
+	 Example 2
+
+	 //Old
+	 Column c = new Column()
+	 {
+		 Header = "Company"
+	 };
+
+	 //New
+	 Column c = new Column()
+	 {
+		 Text = "Company"
+	 };
+
+14.1 RecordField has been renamed to ModelField and must be defined in Model.
+
+	 Reader .Fields has been removed.
+
+     Example
+
+	 //Old
+	 <ext:Store runat="server">
+         <Model>
+             <ext:JsonReader>
+                 <Fields>
+                     <ext:RecordField Name="company" />
+                 </Fields>
+             </ext:JsonReader>
+         </Model>
+     </ext:Store>
+
+	 //New
+	 <ext:Store runat="server">
+         <Model>
+             <ext:Model runat="server">
+                 <Fields>
+                     <ext:ModelField Name="company" />
+                 </Fields>
+             </ext:Model>
+         </Model>
+     </ext:Store>
+
+14.2 Use Validations instead .AllowBlank property.
+
+15.  HttpProxy has been removed to AjaxProxy.
+
+	 Example
+
+	 //Old
+	 <ext:HttpProxy Url="Some.url" />
+
+	 //New
+	 <ext:AjaxProxy Url="Some.url" />
+
+	 And there is no .Method
+	 Use ActionMethods
+
+	 Example
+	 
+	 //Old
+	 <ext:HttpProxy Url="some.url" Method="POST">
+
+	 //New
+	 <ext:AjaxProxy Url="some.url">
+		<ActionMethods READ="POST" />
+	 </ext:AjaxProxy>
+
+
+16.  If Store .Proxy is specified, then Reader should be specified for that Proxy.
+
+	 Example
+
+	 //Old
+	 <ext:Store runat="server">
+         <Proxy>
+             <ext:HttpProxy Url="Some.url" />
+         </Proxy>
+         <Reader>
+             <ext:JsonReader Root="Data" TotalProperty="TotalRecords">
+                 <Fields>
+                     <ext:RecordField Name="Common" />                   
+                 </Fields>
+             </ext:JsonReader>
+         </Reader>
+     </ext:Store>
+
+	 //New
+	 <ext:Store runat="server">
+         <Proxy>
+             <ext:AjaxProxy Url="Some.url">
+                 <Reader>
+                     <ext:JsonReader Root="Data" TotalProperty="TotalRecords" />
+                 </Reader>
+             </ext:AjaxProxy>
+         </Proxy>
+         <Model>
+             <ext:Model runat="server">
+                 <Fields>
+                     <ext:ModelField Name="Company" />
+                 </Fields>
+             </ext:Model>
+         </Model>
+     </ext:Store>
+
+17.  PagingToolbar .PageSize has been removed. 
+     Store .PageSize should be used instead.
+
+	 Example
+
+	 //Old
+	 <ext:PagingToolbar runat="server" PageSize="10">
+
+	 //New
+	 <ext:Store runat="server" PageSize="10">
+
+18.  ColumnModel .SetHidden() has been removed.
+
+	 Use Column .Hidden
+
+	 Example
+
+	 //Old
+	 this.GridPanel1.ColumnModel.SetHidden(2, true);
+
+	 //New
+	 this.GridPanel1.ColumnModel.Columns[2].Hidden = true;
+
+19.  ColumnModel .SetColumnWidth() has been removed.
+
+	 Use Column .SetWidth()
+
+	 Example
+
+	 //Old
+	 this.GridPanel1.ColumnModel.SetColumnWidth(1, 100);
+
+	 //New
+	 this.GridPanel1.ColumnModel.Columns[1].SetWidth(100);
+
+20.  ColumnModel SetColumnHeader method has been removed.
+
+	 Use Column Text property.
+
+	 Example
+
+	 //Old
+	 this.GridPanel1.ColumnModel.SetColumnHeader(0, "New label");
+
+	 //New
+	 this.GridPanel1.ColumnModel.Columns[0].Text = "New label";
+
+21.  ColumnModel SetRenderer method has been removed.
+
+	 Use Column Renderer property.
+
+	 Example
+
+	 //Old
+	 Renderer r = new Renderer();
+	 r.Fn = "change";
+	 this.GridPanel1.ColumnModel.SetRenderer(2, r);
+
+	 //New
+	 Renderer r = new Renderer();
+	 r.Fn = "change";        
+	 this.GridPanel1.ColumnModel.Columns[2].Renderer = r;
+
+22.  JavaScript: MixedCollection .itemAt() has been removed. 
+	 Use .getAt().
+
+	 Example
+
+	 //Old
+	 Panel1.items.itemAt(0);
+
+	 //New
+	 Panel1.items.getAt(0);
+
+23.  GroupingView has been removed and replaced with Grouping feauture.
+
+	 Example
+
+	 //Old
+	 <ext:GridPanel runat="server">
+		 <View>
+			 <ext:GroupingView  
+				 HideGroupedColumn="true"
+				 runat="server" 
+				 GroupTextTpl='{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'>
+			 </ext:GroupingView>
+		 </View>            
+	 </ext:GridPanel>
+
+	 //New
+	 <ext:GridPanel runat="server">
+	     <View>
+             <ext:GridView runat="server" />
+         </View>
+         <Features>
+             <ext:Grouping 
+                 runat="server" 
+                 HideGroupedHeader="true" 
+                 GroupHeaderTpl='{text} ({[values.rows.length]} {[values.rows.length > 1 ? "Items" : "Item"]})' />
+         </Features>
+	 </ext:GridPanel>
+	 
+24.  GridView .ForceFit has been moved to GridPanel.
+	 
+25.  GridView .EnableRowBody has been removed and replaced with RowBody feature.
+
+	 Example
+	 
+	 //Old
+	 <ext:GridPanel runat="server">
+         <View>
+             <ext:GridView 
+                 runat="server"
+                 EnableRowBody="true">
+                 <GetRowClass Handler="var d = record.data;
+                                         rowParams.body = 'some html';" />
+             </ext:GridView>
+         </View>            
+     </ext:GridPanel> 
+
+	 //New
+	 <ext:GridPanel runat="server">
+	     <View>
+		     <ext:GridView runat="server" />
+		  </View>
+          <Features>
+			 <ext:RowBody runat="server">
+                 <GetAdditionalData 
+                     Handler="var d = data; 
+                              orig.rowBody = 'some html';" />
+             </ext:RowBody>
+         </Features>
+	 </ext:GridPanel>
+
+26.  GridPanel Command and GroupCommand listeners has been moved to Column listeners
+
+27.  Store .SortInfo has been removed.
+	 Use Store .Sorters
+
+	 Example
+
+	 //Old
+	 <SortInfo Field="Common" Direction="ASC" />
+
+	 //New
+	 <Sorters>
+         <ext:DataSorter Property="Common" Direction="ASC" />
+     </Sorters> 
+
+28.  Store .SerializationMode has been removed.
+	 Use ModelField .IsComplex 
+	 or 
+	 Store .Data instead of .DataSource equals SerializationMode="Complex".
+
+29.  To get Column .Editor working set up CellEditing plugin for GridPanel.
+
+	 GridPanel "editing" events are moved to CellEditing.
+	 
+	 Example
+
+	 <ext:GridPanel runat="server">
+         <Plugins>
+             <ext:CellEditing runat="server" />
+         </Plugins>
+     </ext:GridPanel>
+
+30.  Signature of ModelField .Convert has been changed.
+	 The first argument is a record, not an array of values.
+
+31.  Store .BasePrams has been renamed to .Parameters
+     Parameter has been renamed to StoreParameter
+
+32.  RowSelectionModel RowSelect and RowDeselect Listener and DirectEvent has been renamed to
+     Select and Deselect
+
+33.  RowSelectionModel JavaScript .getSelected() has been removed.
+	 Use .getSelection().
+
+34.  "Layout" type controls has been removed.
+
+	 Use the Layout and LayoutConfig properties of a container.
+
+35.  GridFilters plugin became a feature and should be defined in GridPanel .Features, not .Plugins.
+
+36.  ScriptTagProxy has been renamed to JsonPProxy
+
+37.  BufferView has been removed. Use Store .Buffered property.
+
+38.  GridView .ScrollOffset has been moved to GridPanel.
+
+39.  Panel .Header has been renamed to .PreventHeader.
+     
+	 Example
+
+	 //Old
+	 <ext:Panel runat="server" Header="false">
+
+	 //New
+	 <ext:Panel runat="server" PreventHeader="true">
+
+40.  Now ExtJS doesn't override/extend standard JavaScript classes.
+
+	 The createDelegate function has been renamed to bind.
+
+	 Example 1
+
+	 //Old
+	 String.format(string, value1, value2);
+
+	 //New
+	 Ext.String.format(string, value1, value2);
+
+	 Example 2
+
+	 //Old
+	 var f = function () { };
+	 f.defer(10);
+
+	 //New
+	 Ext.Function.defer(f, 10);
+
+	 Example 3
+
+	 //Old
+	 var f = function () {
+		alert(this);
+	 };
+	 f.createDelegate('Hello!')();
+
+	 //New	
+	 Ext.Function.bind(f, 'Hello!')();
+
+41.  Store .OnRefreshData has been renamed to .OnReadData
+ 
+42.  LockingGridView has been removed.
+	 Use Column .Locked property.
+
+43.  GridView .MarkDirty has been removed.
+
+44.  RowEditor plugin has been removed.
+	 Use GridPanel RowEditing Feature.
+
+45.  XMLReader .IDPath has been removed.
+     Use .IDProperty
+
+46. ComboBox .Template has been removed. Use ComboBox ListConfig.Tpl and ListConfig.ItemTpl.
+
+    Example
+
+	//Old
+    <ext:ComboBox runat=server>
+        <Template runat="server">
+            <Html>
+                
+            </Html>
+        </Template>
+    </ext:ComboBox>
+
+	//New
+    <ext:ComboBox runat="server">
+        <ListConfig>
+            <Tpl runat="server">
+                <Html>
+                    
+                </Html>
+            </Tpl>
+            <ItemTpl runat="server">
+                <Html>
+                    
+                </Html>
+            </ItemTpl>
+        </ListConfig>
+    </ext:ComboBox>
+
+47. ComboBox .LoadingText has been removed. Use ComboBox ListConfig.LoadingText.
+
+	Example
+
+	//Old
+	<ext:ComboBox runat=server LoadingText="Searching..." />
+
+	//New
+	<ext:ComboBox runat="server">
+        <ListConfig LoadingText="Searching..." />
+    </ext:ComboBox>
+
+48. ComboBox .ItemSelector has been removed. Use ComboBox ListConfig.ItemSelector.
+
+	Example
+
+	//Old
+	<ext:ComboBox runat=server ItemSelector="div.my-item" />
+
+	//New
+	<ext:ComboBox runat="server">
+        <ListConfig ItemSelector="div.my-item" />
+    </ext:ComboBox>
+
+49. ComboBox Select listener. An array of records is passed to a listener, not a single record.
+
+50. ComboBox server .SelectedItem is used only when ComboBox is configured with ReadOnly="true".
+    In any other cases use .SelectedItems.
+
+51. Store server .UpdateRecordField() has been removed.
+
+	Example
+
+	//Old
+	Store1.UpdateRecordField(0, "company", (object)"New Company");
+
+	//New
+	Store1.GetAt(0).Set("company", (object)"New Company");
+
+52. ComboBox client .triggers collection has been removed. Use .getTrigger(index).
+
+	Example
+	
+	//Old
+	ComboBox1.triggers[0]
+
+	//New
+	ComboBox.getTrigger(0)
+
+53. CompositeField hasb been removed and replaced with FieldContainer.
+    Note that default Layout of FieldContainer is "autocontainer", not "hbox".
+
+	Example
+
+	//Old
+	<ext:CompositeField runat="server">
+        <Items>
+            <ext:TextField runat="server" Flex="1" />
+            <ext:TextField runat="server" Flex="1" />
+        </Items>
+    </ext:CompositeField>
+
+	//New
+	<ext:FieldContainer runat="server" Layout="HBoxLayout">
+        <Items>
+            <ext:TextField runat="server" Flex="1" />
+            <ext:TextField runat="server" Flex="1" />
+        </Items>
+    </ext:FieldContainer>
+
+54. Menu ItemClick has been renamed to Click.
+
+55. DropDownField .ComponentAlign has been renamed to PickerAlign.
+
+56. DropDownField new property .MatchFieldWidth has true value by default.
+	So, .Width of a Component is ignored.
+	To avoid it set up MatchFieldWidth="false".
+
+57. TreeNode class has been renamed to Node, .Nodes renamed to .Children.
+	Node has client .data property instead of .attributes one.
+
+58. TreePanel DefaultSelectionModel and MultiSelectionModel has been renamed to TreeSelectionModel.
+    Use .Mode to set up selection mode.
+
+59. FieldUploadField FileSelected event has been removed. Use Change.
+
+60. Form fields .DataIndex has been renamed to .Name.
+
+61. PagingToolbar .PageIndex has been removed. Use Store .LoadPage(index) or set up a respective "start" parameter.
+
+62. MultiSelect .Legend has been removed. Wrap MultiSelect in FieldSet of use ListTitle.
+
+63. Use NumberField instead of SpinnerField.
+
+64. Container .LabelAlign, .LabelPad, .LabelSeparator, .LabelStyle, .LabelWidth has been removed.
+	Use the same properties of container items.
+	
+	Note that you can set these properties for all items using Container Defaults or FormPanel FieldDefaults.
+
+65. ColorPalette has been renamed to ColorPicker.
+
+66. ComboBox Mode has need renamed to QueryMode.
+
+67. BottomTitle has been removed. Use Panel HeaderPosition.
+
+68. DataView OverClass has been renamed to OverCls.
+	To set up over class for items, use OverItemCls.
+
+69. MenuTextItem has been removed. You can use, for example, Label or DisplayField.
+
+70. Element .AddClass(), .RemoveClass(), .ToogleClass() has been renamed to, respectively, 
+	.AddCls(), .RemoveCls(), .ToogleCls(). Their client side pairs as well.
+
+71. Panel AutoLoad has been removed. Use Loader.
+	
+	71.1. Use DisableCaching instead of NoCache.
+	71.2. Use RendererType insted of Mode.
+	71.3. Default RendererType is Iframe.
+	71.4. Use RendererType="Html" instead of Mode="Merge".
+	71.5. Use LoadMask.ShowMask instead of ShowMask.
+	71.6. Use LoadMask.Msg instead of MaskMsg.
+	71.7. Use Loader BeforeLoad and Load events instead of Panel BeforeUpdate and Update.
+
+72. TabPanel ResizeTabs has been renamed to Resizable.
+
+73. CenterLayout has been removed. Please us a combination of HBoxLayout and VBoxLayout.
+
+74. ToolbarReorderer plugin has been renamed to BoxReorderer.
+
+75. FormLayout has been removed. Use AnchorLayout.
+
+76. TreeNode has been renamed to Node. Node has no client side getUI method.
+	To get a node's HTML element, use the view's getNode method.
+
+	Example
+
+	//New
+	tree.getView().getNode(node)
+
+77. TreeNode has been renamed to Node. Its Draggable property has be renamed to AllowDrag.
+
+78. TreeNode has been renamed to Node. Leaf nodes requires Leaf="true" to be set up.
+
+79. Tool Qtip has been renamed to Tooltip.
+
+80. TreePanel client side initChildren method has been removed. Use the setRootNode method.
+
+81. TreePanel EnableDD has been removed. Set up TreeViewDragDrop plugin for TreePanel View.
+
+82. TreePanel ContainerScroll has been removed.
+
+83. AsyncNode class has been removed. Use Node with NodeType="async".
+
+84. TreeNode has been renamed to Node. Its cliet side ensureVisible method has been removed.
+    Use TreePanel View focusRow method.
+
+	Example
+
+	//New
+	TreePanel.getView().focusRow(node)
+
+85. ModelField Convert. Now the first argument is a record instance, not just an array.
+
+86. BottomTitle plugin has been removed. Use Panel HeaderPosition="Bottom".
+
+87. BoxComponentBase AutoWidth has been removed.
+
+88. PanelBase KeyMap has been removed. Though we are planning to implement it in one of next releases.
+
+89. Calendaer: Event and EventCollection classes has been renamed to EventModel and EventModelCollection.
+
+90. ResourceManager Namespace is "App" by default. Any widget will share own client id in that namespace.
+
+	Example (client side)
+	
+	//Old
+	TextField1.setValue("Hello World!");
+
+	//New
+	App.TextField1.setValue("Hello World!");
+
+	or
+
+	//New
+	#{TextField1}.setValue("Hello World!");
+
+	You can set up an empty Namespace to get the same as it's in Ext.NET v1.
+
+	Example
+
+	<ext:ResourceManager runat="server" Namespace="" />
+
+91. There is no ViewState on page by default, i.e. ResourceManager DisableViewState="true" by default.
+
+	To get it back, set .DisableViewState="false" for ResourceManager.
+	
+92. ColumnLayout doesn't support FitHeight and Split options. 
+
+	Please use HBox layout if you need this functionality.
+
+93. The type of TextFieldBase Validator has been changed to JFunction (was string).
+
+	Example
+
+	//Old
+	<ext:TextField runat="server" Validator="myValidator">
+
+	//New
+	<ext:TextField runat="server">
+		<Validator Fn="myValidator" />
+	</ext:TextField>
+
+94. GridPanel Reload method doesn't reload its Store, don't use it.
+
+	Use Store Reload method.

@@ -1,0 +1,25 @@
+﻿Pre-Build
+---------------------------------
+
+"$(SolutionDir)Ext.Net.Meta.Factory\$(OutDir)\Ext.Net.Meta.Factory.exe"
+
+// CURRENT
+"$(SolutionDir)Ext.Net\Build\ReferenceAssemblies\ERB\Ext.Net.ResourceBuilder.exe" "$(ProjectDir) " "Ext.Net.Build" "$(ProjectDir) " ""
+
+// OLD
+// "$(SolutionDir)Ext.Net.ERB\$(OutDir)\Ext.Net.ResourceBuilder.exe" "$(ProjectDir) " "Ext.Net.Build" "$(ProjectDir) " ""
+
+XCopy
+---------------------------------
+xcopy "$(SolutionDir)Ext.Net\Build\Ext.Net\CHANGELOG.txt" "$(ProjectDir)" /y
+xcopy "$(SolutionDir)Ext.Net\Build\Ext.Net\README.txt" "$(ProjectDir)" /y
+
+
+Post-Build
+---------------------------------
+"$(ProjectDir)Build\ILMerge\ILMerge.exe" /ndebug /keyfile:"$(ProjectDir)Properties\Ext.Net.snk" /out:"$(ProjectDir)Build\Results\Ext.Net.dll" "$(ProjectDir)$(OutDir)Ext.Net.dll" /log:"$(ProjectDir)Build\Results\ILMerge_Log.txt" "$(ProjectDir)$(OutDir)Newtonsoft.Json.dll" "$(ProjectDir)$(OutDir)Ext.Net.Utilities.dll"
+
+
+Ext.NET.Utilities Post-Build
+---------------------------------
+xcopy /Y "$(ProjectDir)$(OutDir)Ext.Net.Utilities.dll" "$(SolutionDir)Ext.Net\Build\Resources\ReferenceAssemblies\Ext.Net.Utilities\"

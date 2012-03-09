@@ -1,0 +1,45 @@
+﻿.x-tab-strip-withmenu em
+{
+    padding-right: 14px;
+}
+
+.x-tab-strip-withmenu.x-tab-closable em
+{
+    padding-right: 27px;
+}
+
+.x-tab-strip-withmenu a.x-tab-strip-menu
+{
+    opacity: 0.8;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);    
+    background-repeat: no-repeat;
+    display: block;
+    width: 11px;
+    height: 11px;
+    position: absolute !important;
+    top: 2px;
+    right: 3px;        
+    font-size: 0;
+    line-height: 0;
+    text-indent: -999px;
+    background-image: url(images/tabmenu/tab-menu.gif);
+}
+
+.x-theme-gray .x-tab-strip-withmenu a.x-tab-strip-menu
+{
+    background-image: url(images/tabmenu/gray-tab-menu.gif);
+}
+
+
+.x-tab-closable a.x-tab-strip-menu
+{
+    right: 15px;
+}
+
+a.x-tab-strip-menu:hover
+{
+   opacity: 1;
+   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);    
+}

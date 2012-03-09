@@ -1,0 +1,45 @@
+.x-loading-indicator
+{
+    font-size: 11px;
+    background-image: url("<%=WebResource("Ext.Net.Build.Ext.Net..images.loading.gif")%>");
+}
+.x-field-indicator
+{
+    position:absolute;
+    display:block;
+    top: 0px;
+    left: 2px;
+    height: 18px;        
+    padding-top: 4px;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0 3px;    
+    white-space: nowrap;
+}
+.x-textfield-icon
+{    
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+    width: 16px;
+    height: 16px;
+    margin-left: 1px;
+    top: 3px;
+    left: 2px;
+}
+.x-textfield-icon-input
+{
+    padding-left: 20px;
+}
+.x-field-note
+{
+    font-size: 12px;
+    color: gray;    
+}
+.x-form-trigger-wrap.x-top-note .x-form-trigger
+{
+    top: auto;
+}
+.clear-right input.x-form-text
+{
+    border-right: 0px !important;
+}

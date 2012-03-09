@@ -1,0 +1,11 @@
+.rating-cell .x-grid-cell-inner{
+    padding-top:0px;
+    padding-bottom:0px;
+    line-height:16px;
+}
+.rating-selected {
+	background: transparent url("<%=WebResource("Ext.Net.Build.Ext.Net.ux.resources.images.ratingcolumn.star.png")%>") repeat-x left center;
+}
+.rating-unselected {
+	background: transparent url("<%=WebResource("Ext.Net.Build.Ext.Net.ux.resources.images.ratingcolumn.star_fade.png")%>") repeat-x left center;
+}

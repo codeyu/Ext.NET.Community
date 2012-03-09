@@ -1,0 +1,1 @@
+..\..\..\JSBuilder\JSBuildConsole.exe /path=desktop.jsb

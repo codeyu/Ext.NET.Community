@@ -1,0 +1,208 @@
+/*!
+* Ext JS Library 4.0
+* Copyright(c) 2006-2011 Sencha Inc.
+* licensing@sencha.com
+* http://www.sencha.com/license
+*/
+
+/*----------------------------------------------------
+    Start Button
+*/
+
+.ux-start-button-icon {
+    background-image: url("<%=WebResource("Ext.Net.Build.Ext.Net..desktop.taskbar.extnet16.gif")%>") !important;
+    background-color: transparent;
+}
+
+.ux-start-button .x-btn-arrow {
+    background-image: none;
+}
+
+.ux-start-button .x-btn-arrow-right {
+    padding-left: 10px;
+}
+
+.ux-taskbar {
+    padding-left: 4px !important;
+}
+
+/*----------------------------------------------------
+    Start Menu
+*/
+
+.ux-start-menu-toolbar .x-btn-inner {
+    text-align: left;
+}
+
+.ux-start-menu-toolbar {
+    padding: 4px !important;
+}
+
+/*----------------------------------------------------
+    TaskBar
+*/
+
+.ux-taskbar .x-toolbar {
+    background: transparent none;
+    border-color: transparent;
+}
+
+.x-ie6 .ux-taskbar .x-toolbar {
+    border-color: #d3e1f1;
+}
+
+.ux-desktop-windowbar .x-btn-inner,
+.x-nbr .ux-desktop-windowbar .x-btn-icon-text-left button {
+    text-align: left !important;
+}
+
+.ux-taskbar .x-toolbar {
+    height: 28px;
+}
+
+.ux-taskbar {
+    height: 28px;
+    padding: 0;
+}
+
+.x-toolbar .x-toolbar {
+    padding: 0;
+}
+
+/*----------------------------------------------------
+    Tray Clock
+*/
+
+.ux-desktop-trayclock {
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/*----------------------------------------------------
+    Desktop DataView
+*/
+
+.ux-wallpaper {
+    background-color: #3d71b8;
+}
+
+.ux-wallpaper-tiled {
+    background-repeat: repeat;
+}
+
+.ux-desktop-shortcut {
+    cursor: pointer;
+    position:absolute;    
+}
+
+.ux-desktop-shortcut-bg{
+    position:absolute;
+    top:0px;
+    left:0px;
+    z-index:1;
+    visibility:hidden;
+    border: 1px solid #62ABCD;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ie-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.ux-desktop-shortcut-wrap{
+    position:absolute;
+    text-align: center;
+    padding: 8px;    
+    width: 64px;
+    top:0px;
+    left:0px;
+    z-index:2;
+    
+}
+
+.x-item-selected div.ux-desktop-shortcut-bg
+{
+    background-color:#EFEFEF;
+    visibility:visible;
+    opacity: 0.5;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);  
+}
+
+.x-view-over.x-item-selected div.ux-desktop-shortcut-bg{
+    background-color:#EFEFEF;
+    visibility:visible;
+    opacity: 0.45;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=45)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=45);  
+}
+
+.x-view-over .ux-desktop-shortcut-bg{
+    background-color:white;
+    visibility:visible;
+    opacity: 0.25;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=25)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=25);  
+    border: 1px solid gray;
+}
+
+.ux-desktop-shortcut-proxy-bg{
+    position:absolute;
+    z-index:9999;        
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ie-border-radius: 5px;
+    border-radius: 5px;
+    background-color:white;    
+    opacity: 0.25;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=25)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=25);  
+    border: 1px solid gray;
+    width:66px;
+    height:91px;
+}
+
+.ux-desktop-shortcut-icon {
+    width: 48px;
+    height: 48px;
+    background-color: transparent;
+    background-repeat: no-repeat;
+}
+
+.ux-desktop-shortcut-text {
+    font: normal 10px tahoma,arial,verdana,sans-serif;
+    text-decoration: none;
+    padding-top: 5px;
+    color: white;
+    height: 30px;
+    overflow:hidden;
+}
+
+.x-ie6 .ux-desktop-shortcut-text, .x-ie7 .ux-desktop-shortcut-text {
+    font: normal 11px tahoma,arial,verdana,sans-serif;
+    height: 27px;
+}
+
+.x-item-selected .ux-desktop-shortcut-text {
+    overflow-y:visible;
+    height: auto;
+}
+
+.x-view-over .ux-desktop-shortcut-text {
+    text-decoration: underline;
+}
+
+.ux-desktop-dd-proxy {
+    opacity:0.4;
+    -moz-opacity:0.4;
+    -webkit-opacity:0.4;
+    -ie-opacity:0.4;
+    filter:alpha(opacity=40);
+    cursor:default ! important;
+}
+
+.x-ie8  .ux-desktop-view, .x-ie9 .ux-desktop-view{
+    background-color:white;    
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);  
+}

@@ -1,0 +1,161 @@
+.row-cmd-cell-ct
+{
+	padding:0px;
+}
+
+.x-grid3 .row-cmd-cell-ct TABLE, .x-grid3 .row-cmd-cell-ct TABLE.x-btn {table-layout:auto !important;}
+.x-grid3 .row-cmd-cell-ct td 
+{
+	border-left:none !important;
+	border-right:none !important;
+	padding-left:0px !important;
+	padding-right:0px !important;
+	vertical-align:middle !important;
+}
+.x-grid3 .row-cmd-cell-ct .x-toolbar
+{
+	border: none !important;
+	padding:0px !important;
+	background: transparent !important;
+}
+
+/*.x-grid3-row td,*/ .x-grid3-summary-row td
+{
+	vertical-align:middle !important;
+}
+
+.x-grid3-row td.x-grid3-td-expander
+{
+	vertical-align:top !important;
+}
+
+.x-grid-group-hd .row-cmd-cell-ct div 
+{
+	background: transparent !important;		
+}
+
+.x-grid-group-hd div.row-cmd-cell-ct 
+{
+	padding-top:0px !important;
+	padding-bottom:0px !important;
+}
+
+div.standart-view-group 
+{
+    float:left;
+    padding-top:4px !important;
+    padding-bottom:4px !important;
+    padding-right:4px !important;
+    padding-left:0px !important;
+}
+
+/*ImageCommand*/
+.row-imagecommand-cell .x-grid3-cell-inner 
+{
+	padding:1px 0px 0px 0px  !important;
+}
+.row-imagecommand 
+{
+	float:left  !important;
+	min-width:16px  !important;
+	height:16px  !important;
+	margin: 0px 5px 0px 0px  !important;
+	overflow:hidden  !important;
+	background-repeat:no-repeat  !important;	
+	cursor:pointer  !important;	
+}
+.row-imagecommand span 
+{	
+	padding:0px 0px 0px 20px  !important;
+	line-height:18px  !important;
+	vertical-align:middle  !important;
+	white-space:nowrap !important;
+}
+
+.x-ie6 div.no-row-imagecommand-text{
+    width:16px !important;
+}
+/*GroupImageCommand*/
+.group-imagecmd-ct .x-grid-group-hd div 
+{
+	height:16px !important;
+}
+.group-imagecmd-ct .x-grid-group-hd
+{
+	padding-top: 2px !important;
+}
+.group-row-imagecommand 
+{
+	float:left;
+	min-width:16px !important;
+	height:16px !important;
+	background-repeat:no-repeat !important;
+	background-position: 0 50% !important;
+	margin: 0px 0px 0px 4px !important;
+	padding: 0px !important;
+	cursor:pointer !important;	
+	padding-top: 0px !important;
+}
+.right-group-imagecommand 
+{
+	float:right;
+	margin: 0px 3px 0px 2px;
+	padding: 0px !important;
+}
+.group-row-imagecommand-cell 
+{
+	float:left;
+	padding: 0px !important;
+	margin:0px !important;
+	background:transparent none !important;		
+}
+.group-row-imagecommand span
+{		
+	margin:0 4px 0 20px  !important;
+	line-height:18px  !important;
+	vertical-align:middle  !important;
+	white-space:nowrap !important;
+}
+
+/*CellCommand*/
+.cell-imagecommand-cell .x-grid3-cell-inner 
+{
+	padding:1px 0 0 0  !important;
+}
+.cell-imagecommand 
+{
+	float:right  !important;
+	min-width:16px  !important;
+	height:16px  !important;
+	margin: 0 5px 0 0  !important;
+	overflow:hidden  !important;
+	background-repeat:no-repeat  !important;	
+	cursor:pointer  !important;	
+}
+.left-cell-imagecommand 
+{
+	float:left  !important;
+}
+.cell-imagecommand span 
+{	
+	padding:0px 0px 0px 20px  !important;
+	line-height:18px  !important;
+	vertical-align:middle  !important;
+	white-space:nowrap !important;
+}
+.cell-imagecommand-value
+{
+	float:left !important;
+	padding-top:3px !important;
+}
+
+.cell-imagecommand-right-value .cell-imagecommand-value
+{
+	float:right !important;
+}
+/*
+.cell-no-imagecommand
+{
+	padding-top:4px !important;
+}
+*/

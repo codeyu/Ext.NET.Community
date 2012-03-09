@@ -1,0 +1,1415 @@
+/*
+ * This file is part of Ext JS 4
+ * 
+ * Copyright (c) 2011 Sencha Inc
+ * 
+ * Contact:  http://www.sencha.com/contact
+ * 
+ * GNU General Public License Usage
+ * This file may be used under the terms of the GNU General Public License version 3.0 as published by the Free Software Foundation and appearing in the file LICENSE included in the packaging of this file.  Please review the following information to ensure the GNU General Public License version 3.0 requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+ * 
+ * If you are unsure which license is appropriate for your use, please contact the sales department at http://www.sencha.com/contact.
+ * 
+ * 
+ */
+
+
+
+Ext.define('Ext.ux.grid.menu.ListMenu', {
+    extend : 'Ext.menu.Menu',
+
+    
+    labelField :  'text',
+    
+    loadingText : 'Loading...',
+    
+    loadOnShow : true,
+    
+    single : false,
+
+    constructor : function (cfg) {
+        this.selected = [];
+        this.addEvents(
+            
+            'checkchange'
+        );
+
+        this.callParent([cfg = cfg || {}]);
+
+        if (!cfg.store && cfg.options) {
+            var options = [];
+            for(var i=0, len=cfg.options.length; i<len; i++){
+                var value = cfg.options[i];
+                switch(Ext.type(value)){
+                    case 'array':  options.push(value); break;
+                    case 'object': options.push([value.id, value[this.labelField]]); break;
+                    case 'string': options.push([value, value]); break;
+                }
+            }
+
+            this.store = Ext.create('Ext.data.ArrayStore', {
+                fields    : ['id', this.labelField],
+                data      :   options,
+                listeners : {
+                    'load' : this.onLoad,
+                    scope  :  this
+                }
+            });
+            this.loaded = true;
+        } else {
+            this.add({text: this.loadingText, iconCls: 'loading-indicator'});
+            this.store.on('load', this.onLoad, this);
+        }
+    },
+
+    destroy : function () {
+        if (this.store) {
+            this.store.destroyStore();
+        }
+        this.callParent();
+    },
+
+    
+    show : function () {
+        var lastArgs = null;
+        return function(){
+            if(arguments.length === 0){
+                this.callParent(lastArgs);
+            } else {
+                lastArgs = arguments;
+                if (this.loadOnShow && !this.loaded) {
+                    this.store.load();
+                }
+                this.callParent(arguments);
+            }
+        };
+    }(),
+
+    
+    onLoad : function (store, records) {
+        var me = this,
+            visible = me.isVisible(),
+            gid, item, itemValue, i, len;
+
+        me.hide(false);
+        me.removeAll(true);
+
+        gid = me.single ? Ext.id() : null;
+
+        for (i = 0, len = records.length; i < len; i++) {
+            itemValue = records[i].get('id');
+            item = Ext.create('Ext.menu.CheckItem', {
+                text: records[i].get(me.labelField),
+                group: gid,
+                checked: Ext.Array.contains(me.selected, itemValue),
+                hideOnClick: false,
+                value: itemValue
+            });
+
+            item.on('checkchange', me.checkChange, me);
+
+            me.add(item);
+        }
+
+        me.loaded = true;
+
+        if (visible) {
+            me.show();
+        }
+
+        me.fireEvent('load', me, records);
+    },
+
+    
+    getSelected : function () {
+        return this.selected;
+    },
+
+    
+    setSelected : function (value) {
+        value = this.selected = [].concat(value);
+
+        if (this.loaded) {
+            this.items.each(function(item){
+                item.setChecked(false, true);
+                for (var i = 0, len = value.length; i < len; i++) {
+                    if (item.value == value[i]) {
+                        item.setChecked(true, true);
+                    }
+                }
+            }, this);
+        }
+        else {
+            this.on("load", Ext.Function.bind(this.setSelected, this, [value]), this, {single : true});
+        }
+    },
+
+    
+    checkChange : function (item, checked) {
+        var value = [];
+        this.items.each(function(item){
+            if (item.checked) {
+                value.push(item.value);
+            }
+        },this);
+        this.selected = value;
+
+        this.fireEvent('checkchange', item, checked);
+    }
+});
+
+
+
+
+Ext.define('Ext.ux.grid.menu.RangeMenu', {
+    extend: 'Ext.menu.Menu',
+
+    
+    fieldCls : 'Ext.form.field.Number',
+
+    
+
+    
+
+    
+    iconCls : {
+        gt : 'ux-rangemenu-gt',
+        lt : 'ux-rangemenu-lt',
+        eq : 'ux-rangemenu-eq'
+    },
+
+    
+    fieldLabels: {
+        gt: 'Greater Than',
+        lt: 'Less Than',
+        eq: 'Equal To'
+    },
+
+    
+    menuItemCfgs : {
+        emptyText: 'Enter Number...',
+        selectOnFocus: false,
+        width: 155
+    },
+
+    
+    menuItems : ['lt', 'gt', '-', 'eq'],
+
+
+    constructor : function (config) {
+        var me = this,
+            fields, fieldCfg, i, len, item, cfg, Cls;
+
+        me.callParent(arguments);
+
+        fields = me.fields = me.fields || {};
+        fieldCfg = me.fieldCfg = me.fieldCfg || {};
+        
+        me.addEvents(
+            
+            'update'
+        );
+      
+        me.updateTask = Ext.create('Ext.util.DelayedTask', me.fireUpdate, me);
+    
+        for (i = 0, len = me.menuItems.length; i < len; i++) {
+            item = me.menuItems[i];
+
+            if (item !== '-') {
+                // defaults
+                cfg = {
+                    itemId : 'range-' + item,
+                    enableKeyEvents : true,
+                    hideLabel  : false,
+                    fieldLabel : me.iconTpl.apply({
+                        cls  : me.iconCls[item] || 'no-icon',
+                        text : me.fieldLabels[item] || '',
+                        src  : Ext.BLANK_IMAGE_URL
+                    }),
+                    labelSeparator : '',
+                    labelWidth     : 29,
+                    labelStyle     : 'position: relative;',
+                    listeners  : {
+                        scope  : me,
+                        change : me.onInputChange,
+                        keyup  : me.onInputKeyUp,
+                        el     : {
+                            click : function(e) {
+                                e.stopPropagation();
+                            }
+                        }
+                    },
+                    activate   : Ext.emptyFn,
+                    deactivate : Ext.emptyFn
+                };
+                Ext.apply(
+                    cfg,
+                    // custom configs
+                    Ext.applyIf(fields[item] || {}, fieldCfg[item]),
+                    // configurable defaults
+                    me.menuItemCfgs
+                );
+                Cls = cfg.fieldCls || me.fieldCls;
+                item = fields[item] = Ext.create(Cls, cfg);
+            }
+            me.add(item);
+        }
+    },
+
+    
+    fireUpdate : function () {
+        this.fireEvent('update', this);
+    },
+    
+    
+    getValue : function () {
+        var result = {}, key, field;
+
+        for (key in this.fields) {
+            field = this.fields[key];
+            if (field.isValid() && field.getValue() !== null) {
+                result[key] = field.getValue();
+            }
+        }
+
+        return result;
+    },
+  
+    	
+    setValue : function (data) {
+        var key;
+
+        for (key in this.fields) {
+            this.fields[key].setValue(key in data ? data[key] : '');
+        }
+
+        this.fireEvent('update', this);
+    },
+
+    
+    onInputKeyUp: function(field, e) {
+        if (e.getKey() === e.RETURN && field.isValid()) {
+            e.stopEvent();
+            this.hide();
+        }
+    },
+
+    
+    onInputChange : function(field) {
+        var me = this,
+            fields = me.fields,
+            eq = fields.eq,
+            gt = fields.gt,
+            lt = fields.lt;
+
+        if (field == eq) {
+            if (gt) {
+                gt.setValue(null);
+            }
+            if (lt) {
+                lt.setValue(null);
+            }
+        } else {
+            eq.setValue(null);
+        }
+
+        // restart the timer
+        this.updateTask.delay(this.updateBuffer);
+    }
+}, function() {
+
+    
+    this.prototype.iconTpl = Ext.create('Ext.XTemplate',
+        '<img src="{src}" alt="{text}" class="' + Ext.baseCSSPrefix + 'menu-item-icon ux-rangemenu-icon {cls}" />'
+    );
+
+});
+
+
+
+
+Ext.define('Ext.ux.grid.filter.Filter', {
+    extend: 'Ext.util.Observable',
+
+    
+    active : false,
+    
+    
+    dataIndex : null,
+    
+    menu : null,
+    
+    updateBuffer : 500,
+
+    constructor : function (config) {
+        Ext.apply(this, config);
+
+        this.addEvents(
+            
+            'activate',
+            
+            'deactivate',
+            
+            'serialize',
+            
+            'update'
+        );
+        Ext.ux.grid.filter.Filter.superclass.constructor.call(this);
+
+        // setting filtered to true on all filter instances ensures that the filter won't be blurred when the mouse leaves the component
+        this.menu = this.createMenu(Ext.applyIf({filtered: true}, config));
+        this.init(config);
+
+        if (config && config.value) {
+            this.setValue(config.value);
+            this.setActive(config.active !== false, true);
+            delete config.value;
+        }
+    },
+
+    
+    destroy : function(){
+        if (this.menu){
+            this.menu.destroy();
+        }
+
+        this.clearListeners();
+    },
+
+    
+    init : Ext.emptyFn,
+
+    
+    createMenu : function(config) {
+        return Ext.create('Ext.menu.Menu', config.menuItems ? {items : config.menuItems} : {});
+    },
+
+    
+    getValue : Ext.emptyFn,
+
+    
+    setValue : Ext.emptyFn,
+
+    
+    isActivatable : function(){
+        return true;
+    },
+
+    
+    getSerialArgs : Ext.emptyFn,
+
+    
+    validateRecord : function(){
+        return true;
+    },
+
+    
+    serialize : function(){
+        var args = this.getSerialArgs();
+        this.fireEvent('serialize', args, this);
+        return args;
+    },
+
+    
+    fireUpdate : function(){
+        if (this.active) {
+            this.fireEvent('update', this);
+        }
+        this.setActive(this.isActivatable());
+    },
+
+    
+    setActive : function(active, suppressEvent) {
+        if(this.active != active){
+            this.active = active;
+            if (suppressEvent !== true) {
+                this.fireEvent(active ? 'activate' : 'deactivate', this);
+            }
+        }
+    }
+});
+
+
+
+
+Ext.define('Ext.ux.grid.filter.BooleanFilter', {
+    extend: 'Ext.ux.grid.filter.Filter',
+    alias: 'gridfilter.boolean',
+
+	
+	defaultValue : false,
+	
+	yesText : 'Yes',
+	
+	noText : 'No',
+
+    
+    init : function (config) {
+        var gId = Ext.id();
+		this.options = [
+			Ext.create('Ext.menu.CheckItem', {text: this.yesText, group: gId, checked: this.defaultValue === true}),
+			Ext.create('Ext.menu.CheckItem', {text: this.noText, group: gId, checked: this.defaultValue === false})];
+
+		this.menu.add(this.options[0], this.options[1]);
+
+		for(var i=0; i<this.options.length; i++){
+			this.options[i].on('click', this.fireUpdate, this);
+			this.options[i].on('checkchange', this.fireUpdate, this);
+		}
+	},
+
+    
+    getValue : function () {
+		return this.options[0].checked;
+	},
+
+    
+	setValue : function (value) {
+		this.options[value ? 0 : 1].setChecked(true);
+	},
+
+    
+    getSerialArgs : function () {
+		var args = {type: 'boolean', value: this.getValue()};
+		return args;
+	},
+
+    
+    validateRecord : function (record) {
+		return record.get(this.dataIndex) == this.getValue();
+	}
+});
+
+
+
+
+Ext.define('Ext.ux.grid.filter.DateFilter', {
+    extend: 'Ext.ux.grid.filter.Filter',
+    alias: 'gridfilter.date',
+    uses: ['Ext.picker.Date', 'Ext.menu.Menu'],
+
+    
+    afterText : 'After',
+    
+    beforeText : 'Before',
+    
+    compareMap : {
+        before: 'lt',
+        after:  'gt',
+        on:     'eq'
+    },
+    
+    dateFormat : 'm/d/Y',
+
+    
+    
+    
+    menuItems : ['before', 'after', '-', 'on'],
+
+    
+    menuItemCfgs : {
+        selectOnFocus: true,
+        width: 125
+    },
+
+    
+    onText : 'On',
+
+    
+    pickerOpts : {},
+
+    
+    init : function (config) {
+        var me = this,
+            pickerCfg, i, len, item, cfg;
+
+        pickerCfg = Ext.apply(me.pickerOpts, {
+            xtype: 'datepicker',
+            minDate: me.minDate,
+            maxDate: me.maxDate,
+            format:  me.dateFormat,
+            listeners: {
+                scope: me,
+                select: me.onMenuSelect
+            }
+        });
+
+        me.fields = {};
+        for (i = 0, len = me.menuItems.length; i < len; i++) {
+            item = me.menuItems[i];
+            if (item !== '-') {
+                cfg = {
+                    itemId: 'range-' + item,
+                    text: me[item + 'Text'],
+                    menu: Ext.create('Ext.menu.Menu', {
+                        items: [
+                            Ext.apply(pickerCfg, {
+                                itemId: item
+                            })
+                        ]
+                    }),
+                    listeners: {
+                        scope: me,
+                        checkchange: me.onCheckChange
+                    }
+                };
+                item = me.fields[item] = Ext.create('Ext.menu.CheckItem', cfg);
+            }
+            //me.add(item);
+            me.menu.add(item);
+        }
+    },
+
+    onCheckChange : function () {
+        this.setActive(this.isActivatable());
+        this.fireEvent('update', this);
+    },
+
+    
+    onInputKeyUp : function (field, e) {
+        var k = e.getKey();
+        if (k == e.RETURN && field.isValid()) {
+            e.stopEvent();
+            this.menu.hide();
+        }
+    },
+
+    
+    onMenuSelect : function (picker, date) {
+        var fields = this.fields,
+            field = this.fields[picker.itemId];
+
+        field.setChecked(true);
+
+        if (field == fields.on) {
+            fields.before.setChecked(false, true);
+            fields.after.setChecked(false, true);
+        } else {
+            fields.on.setChecked(false, true);
+            if (field == fields.after && this.getFieldValue('before') < date) {
+                fields.before.setChecked(false, true);
+            } else if (field == fields.before && this.getFieldValue('after') > date) {
+                fields.after.setChecked(false, true);
+            }
+        }
+        this.fireEvent('update', this);
+
+        picker.up('menu').hide();
+    },
+
+    
+    getValue : function () {
+        var key, result = {};
+        for (key in this.fields) {
+            if (this.fields[key].checked) {
+                result[key] = this.getFieldValue(key);
+            }
+        }
+        return result;
+    },
+
+    
+    setValue : function (value, preserve) {
+        var key;
+        for (key in this.fields) {
+            if(value[key]){
+                this.getPicker(key).setValue(value[key]);
+                this.fields[key].setChecked(true);
+            } else if (!preserve) {
+                this.fields[key].setChecked(false);
+            }
+        }
+        this.fireEvent('update', this);
+    },
+
+    
+    isActivatable : function () {
+        var key;
+        for (key in this.fields) {
+            if (this.fields[key].checked) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    
+    getSerialArgs : function () {
+        var args = [];
+        for (var key in this.fields) {
+            if(this.fields[key].checked){
+                args.push({
+                    type: 'date',
+                    comparison: this.compareMap[key],
+                    value: Ext.Date.format(this.getFieldValue(key), this.dateFormat)
+                });
+            }
+        }
+        return args;
+    },
+
+    
+    getFieldValue : function(item){
+        return this.getPicker(item).getValue();
+    },
+
+    
+    getPicker : function(item){
+        return this.fields[item].menu.items.first();
+    },
+
+    
+    validateRecord : function (record) {
+        var key,
+            pickerValue,
+            val = record.get(this.dataIndex),
+            clearTime = Ext.Date.clearTime;
+
+        if(!Ext.isDate(val)){
+            return false;
+        }
+        val = clearTime(val, true).getTime();
+
+        for (key in this.fields) {
+            if (this.fields[key].checked) {
+                pickerValue = clearTime(this.getFieldValue(key), true).getTime();
+                if (key == 'before' && pickerValue <= val) {
+                    return false;
+                }
+                if (key == 'after' && pickerValue >= val) {
+                    return false;
+                }
+                if (key == 'on' && pickerValue != val) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+});
+
+
+
+
+Ext.define('Ext.ux.grid.filter.ListFilter', {
+    extend: 'Ext.ux.grid.filter.Filter',
+    alias: 'gridfilter.list',
+
+    
+    
+    phpMode : false,
+    
+
+    
+    init : function (config) {
+        this.dt = Ext.create('Ext.util.DelayedTask', this.fireUpdate, this);
+    },
+
+    
+    createMenu: function(config) {
+        var menuCfg = config.menuItems ? {items : config.menuItems} : {};
+        Ext.copyTo(menuCfg, config, "labelField,loadingText,loadOnShow,single,store,options");
+        
+        var menu = Ext.create('Ext.ux.grid.menu.ListMenu', menuCfg);
+        menu.on('checkchange', this.onCheckChange, this);
+        return menu;
+    },
+
+    
+    getValue : function () {
+        return this.menu.getSelected();
+    },
+    
+    setValue : function (value) {
+        this.menu.setSelected(value);
+        this.fireEvent('update', this);
+    },
+
+    
+    isActivatable : function () {
+        return this.getValue().length > 0;
+    },
+
+    
+    getSerialArgs : function () {
+        return {type: 'list', value: this.phpMode ? this.getValue().join(',') : this.getValue()};
+    },
+
+    
+    onCheckChange : function(){
+        this.dt.delay(this.updateBuffer);
+    },
+
+
+    
+    validateRecord : function (record) {
+        var valuesArray = this.getValue();
+        return Ext.Array.indexOf(valuesArray, record.get(this.dataIndex)) > -1;
+    }
+});
+
+
+
+
+Ext.define('Ext.ux.grid.filter.NumericFilter', {
+    extend: 'Ext.ux.grid.filter.Filter',
+    alias: 'gridfilter.numeric',
+    uses: ['Ext.form.field.Number'],
+
+    
+    createMenu: function(config) {
+        var me = this,
+            menuCfg = config.menuItems ? {items : config.menuItems} : {},
+            menu;
+            
+        if(Ext.isDefined(config.emptyText)){
+            menuCfg.menuItemCfgs = {
+                emptyText: config.emptyText,
+                selectOnFocus: false,
+                width: 155
+            };
+        }
+            
+        menu = Ext.create('Ext.ux.grid.menu.RangeMenu', menuCfg);
+        menu.on('update', me.fireUpdate, me);
+        return menu;
+    },
+
+    
+    getValue : function () {
+        return this.menu.getValue();
+    },
+
+    
+    setValue : function (value) {
+        this.menu.setValue(value);
+    },
+
+    
+    isActivatable : function () {
+        var values = this.getValue(),
+            key;
+        for (key in values) {
+            if (values[key] !== undefined) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    
+    getSerialArgs : function () {
+        var key,
+            args = [],
+            values = this.menu.getValue();
+        for (key in values) {
+            args.push({
+                type: 'numeric',
+                comparison: key,
+                value: values[key]
+            });
+        }
+        return args;
+    },
+
+    
+    validateRecord : function (record) {
+        var val = record.get(this.dataIndex),
+            values = this.getValue(),
+            isNumber = Ext.isNumber;
+        if (isNumber(values.eq) && val != values.eq) {
+            return false;
+        }
+        if (isNumber(values.lt) && val >= values.lt) {
+            return false;
+        }
+        if (isNumber(values.gt) && val <= values.gt) {
+            return false;
+        }
+        return true;
+    }
+});
+
+
+
+
+Ext.define('Ext.ux.grid.filter.StringFilter', {
+    extend: 'Ext.ux.grid.filter.Filter',
+    alias: 'gridfilter.string',
+
+    
+    iconCls : 'ux-gridfilter-text-icon',
+
+    emptyText: 'Enter Filter Text...',
+    selectOnFocus: true,
+    width: 125,
+
+    
+    init : function (config) {
+        Ext.applyIf(config, {
+            enableKeyEvents: true,
+            iconCls: this.iconCls,
+            hideLabel: true,
+            listeners: {
+                scope: this,
+                keyup: this.onInputKeyUp,
+                el: {
+                    click: function(e) {
+                        e.stopPropagation();
+                    }
+                }
+            }
+        });
+
+        this.inputItem = Ext.create('Ext.form.field.Text', config);
+        this.menu.add(this.inputItem);
+        this.updateTask = Ext.create('Ext.util.DelayedTask', this.fireUpdate, this);
+    },
+
+    
+    getValue : function () {
+        return this.inputItem.getValue();
+    },
+
+    
+    setValue : function (value) {
+        this.inputItem.setValue(value);
+        this.fireEvent('update', this);
+    },
+
+    
+    isActivatable : function () {
+        return this.inputItem.getValue().length > 0;
+    },
+
+    
+    getSerialArgs : function () {
+        return {type: 'string', value: this.getValue()};
+    },
+
+    
+    validateRecord : function (record) {
+        var val = record.get(this.dataIndex);
+
+        if(typeof val != 'string') {
+            return (this.getValue().length === 0);
+        }
+
+        return val.toLowerCase().indexOf(this.getValue().toLowerCase()) > -1;
+    },
+
+    
+    onInputKeyUp : function (field, e) {
+        var k = e.getKey();
+        if (k == e.RETURN && field.isValid()) {
+            e.stopEvent();
+            this.menu.hide();
+            return;
+        }
+        // restart the timer
+        this.updateTask.delay(this.updateBuffer);
+    }
+});
+
+
+
+
+Ext.define('Ext.ux.grid.FiltersFeature', {
+    extend : 'Ext.grid.feature.Feature',
+    alias  : 'feature.filters',
+    uses   : [
+        'Ext.ux.grid.menu.ListMenu',
+        'Ext.ux.grid.menu.RangeMenu',
+        'Ext.ux.grid.filter.BooleanFilter',
+        'Ext.ux.grid.filter.DateFilter',
+        'Ext.ux.grid.filter.ListFilter',
+        'Ext.ux.grid.filter.NumericFilter',
+        'Ext.ux.grid.filter.StringFilter'
+    ],
+
+    isGridFiltersPlugin : true,
+
+    
+    autoReload : true,
+    
+     encode : true,
+    
+    
+    filterCls : 'ux-filtered-column',
+    
+    local : false,
+    
+    menuFilterText : 'Filters',
+    
+    paramPrefix : 'filter',
+    
+    showMenu : true,
+    
+    stateId : undefined,
+    
+    updateBuffer : 500,
+
+    // doesn't handle grid body events
+    hasFeatureEvent: false,
+
+
+    
+    constructor : function (config) {
+        var me = this;
+
+        config = config || {};
+        Ext.apply(me, config);
+
+        me.deferredUpdate = Ext.create('Ext.util.DelayedTask', me.reload, me);
+
+        // Init filters
+        me.filters = me.createFiltersCollection();
+        me.filterConfigs = config.filters;
+    },
+
+    attachEvents: function() {
+        var me = this,
+            view = me.view,
+            headerCt = view.headerCt,
+            grid = me.getGridPanel();
+
+        me.bindStore(view.getStore(), true);
+
+        // Listen for header menu being created
+        headerCt.on('menucreate', me.onMenuCreate, me);
+
+        view.on('refresh', me.onRefresh, me);
+        grid.on({
+            scope: me,
+            beforestaterestore: me.applyState,
+            beforestatesave: me.saveState,
+            beforedestroy: me.destroy
+        });
+
+        // Add event and filters shortcut on grid panel
+        grid.filters = me;
+        this.addEvents('filterupdate');
+    },
+
+    createFiltersCollection: function () {
+        return Ext.create('Ext.util.MixedCollection', false, function (o) {
+            return o ? o.dataIndex : null;
+        });
+    },
+
+    
+    createFilters: function() {
+        var me = this,
+            hadFilters = me.filters.getCount(),
+            grid = me.getGridPanel(),
+            filters = me.createFiltersCollection(),
+            model = grid.store.model,
+            fields = model.prototype.fields,
+            field,
+            filter,
+            state,
+			add;
+
+        if (hadFilters) {
+            state = {};
+            me.saveState(null, state);
+        }
+
+        add = function (dataIndex, config, filterable) {
+            if (dataIndex && (filterable || config)) {
+                field = fields.get(dataIndex);
+                filter = {
+                    dataIndex: dataIndex,
+                    type: (field && field.type && field.type.type) || 'auto'
+                };
+
+                if (Ext.isObject(config)) {
+                    Ext.apply(filter, config);
+                }
+
+                filters.replace(filter);
+            }
+        }
+
+        // We start with filters from our config and then merge on filters from the columns
+        // in the grid. The Grid columns take precedence.
+        Ext.Array.each(me.filterConfigs, function (fc) {
+            add(fc.dataIndex, fc);
+        });
+
+        Ext.Array.each(grid.columns, function (column) {
+            if (column.filterable === false) {
+                filters.removeAtKey(column.dataIndex);
+            } else {
+                add(column.dataIndex, column.filter, column.filterable);
+            }
+        });
+
+        me.removeAll();
+        me.addFilters(filters.items);
+
+        if (hadFilters) {
+            me.applyState(null, state);
+        }
+    },
+
+    
+    onMenuCreate: function(headerCt, menu) {
+        var me = this;
+        me.createFilters();
+        menu.on('beforeshow', me.onMenuBeforeShow, me);
+    },
+
+    
+    onMenuBeforeShow: function(menu) {
+        var me = this,
+            menuItem, filter;
+
+        if (me.showMenu) {
+            menuItem = me.menuItem;
+            if (!menuItem || menuItem.isDestroyed) {
+                me.createMenuItem(menu);
+                menuItem = me.menuItem;
+            }
+
+            filter = me.getMenuFilter();
+
+            if (filter) {
+                menuItem.setMenu(filter.menu, false);
+                menuItem.setChecked(filter.active);
+                // disable the menu if filter.disabled explicitly set to true
+                menuItem.setDisabled(filter.disabled === true);
+            }
+            menuItem.setVisible(!!filter);
+            this.sep.setVisible(!!filter);
+        }
+    },
+
+
+    createMenuItem: function(menu) {
+        var me = this;
+        me.sep  = menu.add('-');
+        me.menuItem = menu.add({
+            checked: false,
+            itemId: 'filters',
+            text: me.menuFilterText,
+            listeners: {
+                scope: me,
+                checkchange: me.onCheckChange,
+                beforecheckchange: me.onBeforeCheck
+            }
+        });
+    },
+
+    getGridPanel: function() {
+        return this.view.up('gridpanel');
+    },
+
+    
+    applyState : function (grid, state) {
+        var key, filter;
+        this.applyingState = true;
+        this.clearFilters();
+
+        if (state.filters) {
+            for (key in state.filters) {
+                filter = this.filters.get(key);
+                if (filter) {
+                    filter.setValue(state.filters[key]);
+                    filter.setActive(true);
+                }
+            }
+        }
+
+        this.deferredUpdate.cancel();
+
+        if (this.local) {
+            this.reload();
+        }
+
+        delete this.applyingState;
+        delete state.filters;
+    },
+
+    
+    saveState : function (grid, state) {
+        var filters = {};
+        this.filters.each(function (filter) {
+            if (filter.active) {
+                filters[filter.dataIndex] = filter.getValue();
+            }
+        });
+        return (state.filters = filters);
+    },
+
+    
+    destroy : function () {
+        var me = this;
+        Ext.destroyMembers(me, 'menuItem', 'sep');
+        me.removeAll();
+        me.clearListeners();
+    },
+
+    
+    removeAll : function () {
+        if(this.filters){
+            Ext.destroy.apply(Ext, this.filters.items);
+            // remove all items from the collection
+            this.filters.clear();
+        }
+    },
+
+
+    
+    bindStore : function(store, initial){
+        if(!initial && this.store){
+            if (this.local) {
+                store.un('load', this.onLoad, this);
+            } else {
+                store.un('beforeload', this.onBeforeLoad, this);
+            }
+        }
+
+        if(store){
+            if (this.local) {
+                store.on('load', this.onLoad, this);
+            } else {
+                store.on('beforeload', this.onBeforeLoad, this);
+            }
+        }
+
+        this.store = store;
+    },
+
+
+    
+    getMenuFilter : function () {
+        var header = this.view.headerCt.getMenu().activeHeader;
+        return header ? this.filters.get(header.dataIndex) : null;
+    },
+
+    
+    onCheckChange : function (item, value) {
+        this.getMenuFilter().setActive(value);
+    },
+
+    
+    onBeforeCheck : function (check, value) {
+        return !value || this.getMenuFilter().isActivatable();
+    },
+
+    
+    onStateChange : function (event, filter) {
+        if (event !== 'serialize') {
+            var me = this,
+                grid = me.getGridPanel();
+
+            if (filter == me.getMenuFilter()) {
+                me.menuItem.setChecked(filter.active, false);
+            }
+
+            if ((me.autoReload || me.local) && !me.applyingState) {
+                me.deferredUpdate.delay(me.updateBuffer);
+            }
+            me.updateColumnHeadings();
+
+            if (!me.applyingState) {
+                grid.saveState();
+            }
+            this.fireEvent('filterupdate', me, filter);
+        }
+    },
+
+    
+    onBeforeLoad : function (store, options) {
+        options.params = options.params || {};
+        this.cleanParams(options.params);
+        var params = this.buildQuery(this.getFilterData());
+        Ext.apply(options.params, params);
+    },
+
+    
+    onLoad : function (store, options) {
+        store.filterBy(this.getRecordFilter());
+    },
+
+    
+    onRefresh : function () {
+        this.updateColumnHeadings();
+    },
+
+    
+    updateColumnHeadings : function () {
+        var me = this,
+            headerCt = me.view.headerCt;
+        if (headerCt) {
+            headerCt.items.each(function(header) {
+                var filter = me.getFilter(header.dataIndex);
+                header[filter && filter.active ? 'addCls' : 'removeCls'](me.filterCls);
+            });
+        }
+    },
+
+    
+    reload : function () {
+        var me = this,
+            store = me.view.getStore(),
+            start;
+
+        if (me.local) {
+            store.clearFilter(true);
+            store.filterBy(me.getRecordFilter());
+        } else {
+            me.deferredUpdate.cancel();
+            store.loadPage(1);
+        }
+    },
+
+    
+    getRecordFilter : function () {
+        var f = [], len, i;
+        this.filters.each(function (filter) {
+            if (filter.active) {
+                f.push(filter);
+            }
+        });
+
+        len = f.length;
+
+        return function (record) {
+            for (i = 0; i < len; i++) {
+                if (!f[i].validateRecord(record)) {
+                    return false;
+                }
+            }
+            return true;
+        };
+    },
+
+    
+    addFilter : function (config) {
+        var Cls = this.getFilterClass(config.type),
+            filter = config.menu ? config : (new Cls(config));
+        this.filters.add(filter);
+
+        Ext.util.Observable.capture(filter, this.onStateChange, this);
+        return filter;
+    },
+
+    
+    addFilters : function (filters) {
+        if (filters) {
+            var i, len, filter;
+
+            for (i = 0, len = filters.length; i < len; i++) {
+                filter = filters[i];
+                // if filter config found add filter for the column
+                if (filter) {
+                    this.addFilter(filter);
+                }
+            }
+        }
+    },
+
+    
+    getFilter : function (dataIndex) {
+        return this.filters.get(dataIndex);
+    },
+
+    
+    clearFilters : function () {
+        this.filters.each(function (filter) {
+            filter.setActive(false);
+        });
+    },
+
+    
+    getFilterData : function () {
+        var filters = [], i, len;
+
+        this.filters.each(function (f) {
+            if (f.active) {
+                var d = [].concat(f.serialize());
+                for (i = 0, len = d.length; i < len; i++) {
+                    filters.push({
+                        field: f.dataIndex,
+                        data: d[i]
+                    });
+                }
+            }
+        });
+        return filters;
+    },
+
+    
+    buildQuery : function (filters) {
+        var p = {}, i, f, root, dataPrefix, key, tmp,
+            len = filters.length;
+
+        if (!this.encode){
+            for (i = 0; i < len; i++) {
+                f = filters[i];
+                root = [this.paramPrefix, '[', i, ']'].join('');
+                p[root + '[field]'] = f.field;
+
+                dataPrefix = root + '[data]';
+                for (key in f.data) {
+                    p[[dataPrefix, '[', key, ']'].join('')] = f.data[key];
+                }
+            }
+        } else {
+            tmp = [];
+            for (i = 0; i < len; i++) {
+                f = filters[i];
+                tmp.push(Ext.apply(
+                    {},
+                    {field: f.field},
+                    f.data
+                ));
+            }
+            // only build if there is active filter
+            if (tmp.length > 0){
+                p[this.paramPrefix] = Ext.JSON.encode(tmp);
+            }
+        }
+        return p;
+    },
+
+    
+    cleanParams : function (p) {
+        // if encoding just delete the property
+        if (this.encode) {
+            delete p[this.paramPrefix];
+        // otherwise scrub the object of filter data
+        } else {
+            var regex, key;
+            regex = new RegExp('^' + this.paramPrefix + '\[[0-9]+\]');
+            for (key in p) {
+                if (regex.test(key)) {
+                    delete p[key];
+                }
+            }
+        }
+    },
+
+    
+    getFilterClass : function (type) {
+        // map the supported Ext.data.Field type values into a supported filter
+        switch(type) {
+            case 'auto':
+              type = 'string';
+              break;
+            case 'int':
+            case 'float':
+              type = 'numeric';
+              break;
+            case 'bool':
+              type = 'boolean';
+              break;
+        }
+
+        return Ext.ClassManager.getByAlias('gridfilter.' + type);
+    }
+});
+
+

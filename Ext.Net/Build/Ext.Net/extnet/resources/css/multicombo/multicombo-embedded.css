@@ -1,0 +1,24 @@
+.x-multi-selected
+{
+    border: 1px dotted black;
+    cursor: pointer;
+}
+.x-mcombo-nimg-item, .x-mcombo-img-item
+{
+    margin-bottom: 2px;
+}
+.x-mcombo-nimg-item img
+{
+    height: 16px;
+    width: 0px;
+    float: left;
+}
+.x-mcombo-img-item img
+{
+    width: 16px;
+    height: 16px;
+    float: left;
+    background-color: transparent;
+    background-position: 0px 0px;
+    background-repeat: no-repeat !important;
+}
